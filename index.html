@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EskulBim — Dashboard Ekstrakurikuler Sekolah</title>
+    
+    <!-- Meta SEO -->
+    <meta name="description" content="Dashboard Manajemen Ekstrakurikuler Sekolah EskulBim. Pantau, kelola, dan temukan kegiatan ekskul sekolah favoritmu secara mudah dan interaktif.">
+    <meta name="keywords" content="EskulBim, Ekstrakurikuler, Dashboard Sekolah, Paskibra, Pramuka, Futsal, Coding Club">
+    <meta name="author" content="EskulBim">
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Phosphor Icons (Regular & Bold) -->
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Custom scrollbar for modern feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <!-- Top Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs backdrop-blur-md bg-white/95">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+            
+            <!-- Brand -->
+            <div class="flex items-center space-x-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                    <i class="ph-bold ph-graduation-cap text-2xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">
+                            Eskul<span class="text-brand-600">Bim</span>
+                        </h1>
+                        <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-brand-50 text-brand-700 border border-brand-200">
+                            Static Mode
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 font-medium">Dashboard Admin Ekstrakurikuler Sekolah</p>
+                </div>
+            </div>
+
+            <!-- Actions Header -->
+            <div class="flex items-center space-x-3">
+                <button 
+                    type="button" 
+                    onclick="resetDefaultData()" 
+                    title="Reset ke data dummy awal"
+                    class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer"
+                >
+                    <i class="ph-bold ph-arrow-counter-clockwise text-sm"></i>
+                    <span>Reset Data</span>
+                </button>
+                <button 
+                    type="button" 
+                    onclick="openModal('add')" 
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-white font-semibold text-sm bg-brand-600 hover:bg-brand-700 active:scale-[0.98] transition-all shadow-md shadow-brand-500/25 cursor-pointer"
+                >
+                    <i class="ph-bold ph-plus text-base"></i>
+                    <span>Tambah Eskul</span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+
+        <!-- Hero Greeting Banner -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-700 via-indigo-700 to-violet-800 p-6 sm:p-8 text-white shadow-xl shadow-brand-900/10">
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
+            <div class="absolute -left-10 -top-10 w-48 h-48 rounded-full bg-violet-400/20 blur-xl pointer-events-none"></div>
+
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-xs font-semibold backdrop-blur-sm">
+                        <i class="ph-bold ph-sparkle text-amber-300"></i>
+                        <span>Client-Side LocalStorage Enabled</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                        Kelola Kegiatan Ekstrakurikuler Sekolah
+                    </h2>
+                    <p class="text-indigo-100 text-sm sm:text-base leading-relaxed">
+                        Aplikasi web statis responsif tanpa backend database server. Seluruh penambahan, pengeditan, dan penghapusan data tersimpan langsung di browser Anda secara otomatis.
+                    </p>
+                </div>
+
+                <!-- Live Quick Counter Box -->
+                <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl sm:self-start md:self-auto">
+                    <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-2xl text-amber-300">
+                        <i class="ph-bold ph-trophy"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium text-indigo-200">Total Terdaftar</div>
+                        <div class="text-3xl font-extrabold" id="heroTotalCount">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats Grid -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl flex-shrink-0">
+                    <i class="ph-bold ph-basketball"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Olahraga</span>
+                    <span class="text-2xl font-black text-slate-800" id="statOlahraga">0</span>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl flex-shrink-0">
+                    <i class="ph-bold ph-palette"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Seni</span>
+                    <span class="text-2xl font-black text-slate-800" id="statSeni">0</span>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-2xl flex-shrink-0">
+                    <i class="ph-bold ph-cpu"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Akademik</span>
+                    <span class="text-2xl font-black text-slate-800" id="statAkademik">0</span>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl flex-shrink-0">
+                    <i class="ph-bold ph-users-three"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Organisasi</span>
+                    <span class="text-2xl font-black text-slate-800" id="statOrganisasi">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+            
+            <!-- Search Box -->
+            <div class="relative flex-1">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <i class="ph-bold ph-magnifying-glass text-lg"></i>
+                </div>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    oninput="handleFilterChange()" 
+                    placeholder="Cari nama eskul, pembina, atau jadwal..." 
+                    class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all placeholder:text-slate-400"
+                >
+            </div>
+
+            <!-- Category Pills / Dropdown Filter -->
+            <div class="flex items-center flex-wrap gap-2">
+                <button 
+                    type="button" 
+                    onclick="setCategoryFilter('Semua')" 
+                    data-category="Semua"
+                    class="cat-filter-btn px-3.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer bg-brand-600 text-white shadow-xs"
+                >
+                    Semua
+                </button>
+                <button 
+                    type="button" 
+                    onclick="setCategoryFilter('Olahraga')" 
+                    data-category="Olahraga"
+                    class="cat-filter-btn px-3.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600"
+                >
+                    Olahraga
+                </button>
+                <button 
+                    type="button" 
+                    onclick="setCategoryFilter('Seni')" 
+                    data-category="Seni"
+                    class="cat-filter-btn px-3.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600"
+                >
+                    Seni
+                </button>
+                <button 
+                    type="button" 
+                    onclick="setCategoryFilter('Akademik')" 
+                    data-category="Akademik"
+                    class="cat-filter-btn px-3.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600"
+                >
+                    Akademik
+                </button>
+                <button 
+                    type="button" 
+                    onclick="setCategoryFilter('Organisasi')" 
+                    data-category="Organisasi"
+                    class="cat-filter-btn px-3.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600"
+                >
+                    Organisasi
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Section Header -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-extrabold text-slate-900 tracking-tight">Daftar Ekstrakurikuler</h3>
+                <p class="text-xs text-slate-500">Menampilkan kartu kegiatan ekstrakurikuler aktif</p>
+            </div>
+            <span id="filteredCountText" class="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg">
+                Memuat data...
+            </span>
+        </div>
+
+        <!-- Grid Container Ekstrakurikuler -->
+        <div id="eskulGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Kartu di-render secara dinamis lewat JavaScript -->
+        </div>
+
+        <!-- Empty State (Tampil jika tidak ada hasil) -->
+        <div id="emptyState" class="hidden bg-white rounded-3xl border border-dashed border-slate-300 p-12 text-center max-w-lg mx-auto">
+            <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-500 mx-auto flex items-center justify-center text-3xl mb-4 shadow-inner">
+                <i class="ph ph-folder-open"></i>
+            </div>
+            <h4 class="text-base font-bold text-slate-900 mb-1">Tidak Ada Ekstrakurikuler Ditemukan</h4>
+            <p class="text-xs text-slate-500 mb-6 leading-relaxed">
+                Tidak ada data yang sesuai dengan pencarian atau filter yang dipilih. Silakan ubah filter atau tambahkan data baru.
+            </p>
+            <div class="flex items-center justify-center gap-3">
+                <button 
+                    type="button" 
+                    onclick="resetSearchAndFilter()" 
+                    class="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer"
+                >
+                    Hapus Filter
+                </button>
+                <button 
+                    type="button" 
+                    onclick="openModal('add')" 
+                    class="px-4 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl transition-all shadow-xs cursor-pointer"
+                >
+                    Tambah Eskul Baru
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+            <div>
+                &copy; <span id="currentYear"></span> <strong>EskulBim</strong> — Dashboard Ekstrakurikuler Sekolah (Static Version).
+            </div>
+            <div class="flex items-center gap-4">
+                <span>Tailwind CSS CDN</span>
+                <span>•</span>
+                <span>Vanilla JS LocalStorage</span>
+                <span>•</span>
+                <button type="button" onclick="resetDefaultData()" class="hover:text-brand-600 transition-colors cursor-pointer underline">
+                    Pulihkan Dummy Data
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================================== -->
+    <!-- MODAL FORM: Tambah & Edit Ekstrakurikuler  -->
+    <!-- ========================================== -->
+    <div id="eskulModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden transition-all duration-200">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-100 transform transition-all animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
+                <div class="flex items-center space-x-3">
+                    <div id="modalIconBox" class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl">
+                        <i class="ph-bold ph-plus"></i>
+                    </div>
+                    <div>
+                        <h3 id="modalTitle" class="text-base font-extrabold text-slate-900">Tambah Ekstrakurikuler</h3>
+                        <p id="modalSubtitle" class="text-xs text-slate-500">Lengkapi formulir informasi eskul berikut</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal()" class="w-8 h-8 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer">
+                    <i class="ph-bold ph-x text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form -->
+            <form id="eskulForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                <input type="hidden" id="formId">
+
+                <!-- Input Nama Eskul -->
+                <div>
+                    <label for="formName" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                        Nama Ekstrakurikuler <span class="text-rose-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="formName" 
+                        required 
+                        placeholder="Contoh: Klub Coding & Robotik"
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all placeholder:text-slate-400"
+                    >
+                </div>
+
+                <!-- Input Kategori & Pembina (2 Kolom) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Kategori -->
+                    <div>
+                        <label for="formCategory" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                            Kategori <span class="text-rose-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <select 
+                                id="formCategory" 
+                                required
+                                class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl appearance-none focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all pr-10 text-slate-700"
+                            >
+                                <option value="Olahraga">Olahraga</option>
+                                <option value="Seni">Seni</option>
+                                <option value="Akademik">Akademik</option>
+                                <option value="Organisasi">Organisasi</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                                <i class="ph-bold ph-caret-down text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pembina / Ketua -->
+                    <div>
+                        <label for="formLeader" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                            Pembina / Ketua <span class="text-rose-500">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="formLeader" 
+                            required 
+                            placeholder="Contoh: Drs. Bambang, M.Pd"
+                            class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all placeholder:text-slate-400"
+                        >
+                    </div>
+                </div>
+
+                <!-- Input Jadwal -->
+                <div>
+                    <label for="formSchedule" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                        Jadwal Kegiatan <span class="text-rose-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="formSchedule" 
+                        required 
+                        placeholder="Contoh: Setiap Jumat, 15:30 - 17:30 WIB"
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all placeholder:text-slate-400"
+                    >
+                </div>
+
+                <!-- Input URL Logo / Gambar -->
+                <div>
+                    <label for="formLogo" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                        URL Logo / Foto <span class="text-slate-400 font-normal lowercase">(opsional)</span>
+                    </label>
+                    <input 
+                        type="url" 
+                        id="formLogo" 
+                        placeholder="https://images.unsplash.com/... (atau biarkan kosong)"
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all placeholder:text-slate-400"
+                    >
+                </div>
+
+                <!-- Input Deskripsi -->
+                <div>
+                    <label for="formDescription" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                        Deskripsi Kegiatan <span class="text-slate-400 font-normal lowercase">(opsional)</span>
+                    </label>
+                    <textarea 
+                        id="formDescription" 
+                        rows="3" 
+                        placeholder="Tuliskan tujuan, kegiatan, atau prestasi eskul ini..."
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all resize-none placeholder:text-slate-400"
+                    ></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
+                    <button 
+                        type="button" 
+                        onclick="closeModal()" 
+                        class="px-4 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all cursor-pointer"
+                    >
+                        Batal
+                    </button>
+                    <button 
+                        type="submit" 
+                        id="modalSubmitBtn"
+                        class="px-5 py-2.5 rounded-xl text-white font-semibold text-sm bg-brand-600 hover:bg-brand-700 active:scale-[0.98] transition-all shadow-md shadow-brand-500/25 flex items-center space-x-2 cursor-pointer"
+                    >
+                        <i class="ph-bold ph-floppy-disk text-base"></i>
+                        <span id="modalSubmitText">Simpan Eskul</span>
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Floating Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 ease-out flex items-center gap-3 px-4 py-3 bg-slate-900 text-white rounded-2xl shadow-xl text-sm border border-slate-800">
+        <i id="toastIcon" class="ph-bold ph-check-circle text-emerald-400 text-xl"></i>
+        <span id="toastMessage">Pemberitahuan berhasil</span>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT: LocalStorage CRUD Engine       -->
+    <!-- ========================================== -->
+    <script>
+        // Kunci penyimpanan LocalStorage
+        const STORAGE_KEY = 'eskulbim_static_data_v1';
+
+        // Data Dummy Awal Default
+        const DEFAULT_ESKUL_DATA = [
+            {
+                id: '1',
+                name: 'Pramuka Inti Gugusdepan',
+                category: 'Organisasi',
+                leader: 'Drs. Ahmad Fauzi, M.Pd',
+                schedule: 'Setiap Sabtu, 08:00 - 11:00 WIB',
+                logo: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=200&auto=format&fit=crop&q=80',
+                description: 'Membina kedisiplinan, kemandirian, keterampilan survival, tali temali, kepemimpinan, dan kecintaan pada alam.',
+                createdAt: '2026-08-15T08:00:00.000Z'
+            },
+            {
+                id: '2',
+                name: 'Paskibra Satuan Pusaka',
+                category: 'Organisasi',
+                leader: 'Siti Rahmawati, S.Pd',
+                schedule: 'Selasa & Kamis, 15:30 - 17:30 WIB',
+                logo: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32b?w=200&auto=format&fit=crop&q=80',
+                description: 'Membina karakter mental baja, peraturan baris berbaris (PBB), jiwa kepemimpinan, dan patriotisme nasional.',
+                createdAt: '2026-08-16T09:00:00.000Z'
+            },
+            {
+                id: '3',
+                name: 'Futsal & Sepak Bola Club',
+                category: 'Olahraga',
+                leader: 'Coach Dimas Prasetyo',
+                schedule: 'Rabu & Jumat, 16:00 - 18:00 WIB',
+                logo: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=200&auto=format&fit=crop&q=80',
+                description: 'Fokus pada penguasaan teknik dasar passing, shooting, strategi fisik, sportivitas, dan turnamen antar-sekolah.',
+                createdAt: '2026-08-17T10:00:00.000Z'
+            },
+            {
+                id: '4',
+                name: 'Coding & Robotik Club',
+                category: 'Akademik',
+                leader: 'Ir. Hendra Wijaya, S.Kom',
+                schedule: 'Setiap Rabu, 14:30 - 16:30 WIB',
+                logo: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=200&auto=format&fit=crop&q=80',
+                description: 'Eksplorasi pembuatan website modern, pemrograman Python, elektronika sensor Arduino, dan robotika kompetisi.',
+                createdAt: '2026-08-18T11:00:00.000Z'
+            },
+            {
+                id: '5',
+                name: 'Paduan Suara Gita Harmoni',
+                category: 'Seni',
+                leader: 'Clara Anindya, S.Sn',
+                schedule: 'Senin & Kamis, 15:00 - 17:00 WIB',
+                logo: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200&auto=format&fit=crop&q=80',
+                description: 'Wadah olah vokal, teknik pernapasan, paduan suara harmoni, dan persiapan pentas seni serta lomba padus.',
+                createdAt: '2026-08-19T13:00:00.000Z'
+            },
+            {
+                id: '6',
+                name: 'Basket Garuda Club',
+                category: 'Olahraga',
+                leader: 'Coach Budi Santoso',
+                schedule: 'Senin & Rabu, 16:00 - 18:00 WIB',
+                logo: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=200&auto=format&fit=crop&q=80',
+                description: 'Latihan intensif dribbling, defense, formasi permainan, serta persiapan liga basket pelajar DBL.',
+                createdAt: '2026-08-20T14:00:00.000Z'
+            }
+        ];
+
+        // State Aplikasi
+        let currentFilterCategory = 'Semua';
+        let currentSearchQuery = '';
+
+        // Inisialisasi saat Halaman Dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set footer year
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Pastikan data ada di LocalStorage
+            if (!localStorage.getItem(STORAGE_KEY)) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ESKUL_DATA));
+            }
+
+            renderDashboard();
+        });
+
+        // ==========================================
+        // Helper Data LocalStorage
+        // ==========================================
+        function getStoredData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                console.error('Gagal membaca LocalStorage:', e);
+                return [];
+            }
+        }
+
+        function saveStoredData(data) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            } catch (e) {
+                console.error('Gagal menyimpan ke LocalStorage:', e);
+                showToast('Penyimpanan memori browser penuh!', 'error');
+            }
+        }
+
+        function resetDefaultData() {
+            if (confirm('Apakah Anda ingin memulihkan seluruh data ekstrakurikuler ke daftar default awal?')) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ESKUL_DATA));
+                currentFilterCategory = 'Semua';
+                currentSearchQuery = '';
+                document.getElementById('searchInput').value = '';
+                updateCategoryPillsUI();
+                renderDashboard();
+                showToast('Data berhasil di-reset ke default awal!', 'success');
+            }
+        }
+
+        // ==========================================
+        // Rendering Dashboard & Kartu
+        // ==========================================
+        function renderDashboard() {
+            const allData = getStoredData();
+
+            // Update Statistik
+            updateStats(allData);
+
+            // Filter data
+            let filtered = allData.filter(item => {
+                const matchCategory = (currentFilterCategory === 'Semua') || (item.category === currentFilterCategory);
+                
+                const query = currentSearchQuery.toLowerCase().trim();
+                const matchSearch = !query || 
+                    item.name.toLowerCase().includes(query) ||
+                    (item.leader && item.leader.toLowerCase().includes(query)) ||
+                    (item.schedule && item.schedule.toLowerCase().includes(query)) ||
+                    (item.description && item.description.toLowerCase().includes(query));
+
+                return matchCategory && matchSearch;
+            });
+
+            // Update Teks Total Terfilter
+            const filteredCountText = document.getElementById('filteredCountText');
+            filteredCountText.textContent = `Menampilkan ${filtered.length} dari ${allData.length} eskul`;
+
+            const gridContainer = document.getElementById('eskulGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            if (filtered.length === 0) {
+                gridContainer.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            // Render Kartu Eskul
+            gridContainer.innerHTML = filtered.map(item => {
+                // Styling Kategori Badge
+                let badgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
+                if (item.category === 'Olahraga') {
+                    badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                } else if (item.category === 'Seni') {
+                    badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
+                } else if (item.category === 'Akademik') {
+                    badgeClass = 'bg-sky-50 text-sky-700 border-sky-200';
+                } else if (item.category === 'Organisasi') {
+                    badgeClass = 'bg-purple-50 text-purple-700 border-purple-200';
+                }
+
+                // Logo Fallback Placeholder
+                const logoMarkup = item.logo && item.logo.trim() !== ''
+                    ? `<img src="${escapeHtml(item.logo)}" alt="${escapeHtml(item.name)}" class="w-12 h-12 rounded-2xl object-cover border border-slate-200 bg-slate-50 shadow-xs flex-shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/120x120?text=${encodeURIComponent(item.name.slice(0, 3))}';">`
+                    : `<div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-100 to-indigo-100 border border-brand-200 text-brand-600 flex items-center justify-center text-2xl flex-shrink-0">
+                        <i class="ph-bold ph-trophy"></i>
+                       </div>`;
+
+                return `
+                    <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between overflow-hidden group">
+                        
+                        <div class="p-5 sm:p-6 space-y-4">
+                            <!-- Card Header -->
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-center space-x-3.5">
+                                    ${logoMarkup}
+                                    <div>
+                                        <h4 class="font-extrabold text-slate-900 text-base leading-snug group-hover:text-brand-600 transition-colors">
+                                            ${escapeHtml(item.name)}
+                                        </h4>
+                                        <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${badgeClass} inline-block mt-1">
+                                            ${escapeHtml(item.category)}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Meta Info (Pembina & Jadwal) -->
+                            <div class="bg-slate-50/80 rounded-2xl p-3 border border-slate-100 space-y-1.5 text-xs">
+                                <div class="flex items-center gap-2 text-slate-700">
+                                    <i class="ph-bold ph-user-circle text-brand-600 text-sm flex-shrink-0"></i>
+                                    <span class="text-slate-400 font-medium">Pembina:</span>
+                                    <strong class="font-semibold text-slate-800 truncate">${escapeHtml(item.leader || '-')}</strong>
+                                </div>
+                                <div class="flex items-center gap-2 text-slate-700">
+                                    <i class="ph-bold ph-calendar-check text-brand-600 text-sm flex-shrink-0"></i>
+                                    <span class="text-slate-400 font-medium">Jadwal:</span>
+                                    <strong class="font-semibold text-slate-800 truncate">${escapeHtml(item.schedule || '-')}</strong>
+                                </div>
+                            </div>
+
+                            <!-- Deskripsi -->
+                            <p class="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                                ${escapeHtml(item.description || 'Tidak ada deskripsi rinci untuk kegiatan ekstrakurikuler ini.')}
+                            </p>
+                        </div>
+
+                        <!-- Card Footer: Tombol Aksi Edit & Hapus -->
+                        <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-end space-x-2">
+                            <button 
+                                type="button" 
+                                onclick="openModal('edit', '${item.id}')"
+                                class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 rounded-xl border border-slate-200 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer"
+                            >
+                                <i class="ph-bold ph-pencil-simple text-sm"></i>
+                                <span>Edit</span>
+                            </button>
+                            <button 
+                                type="button" 
+                                onclick="deleteItem('${item.id}', '${escapeJs(item.name)}')"
+                                class="px-3 py-1.5 text-xs font-semibold text-rose-600 bg-white hover:bg-rose-50 hover:border-rose-200 rounded-xl border border-slate-200 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer"
+                            >
+                                <i class="ph-bold ph-trash text-sm"></i>
+                                <span>Hapus</span>
+                            </button>
+                        </div>
+
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update Counter Statistik
+        function updateStats(data) {
+            document.getElementById('heroTotalCount').textContent = data.length;
+            document.getElementById('statOlahraga').textContent = data.filter(e => e.category === 'Olahraga').length;
+            document.getElementById('statSeni').textContent = data.filter(e => e.category === 'Seni').length;
+            document.getElementById('statAkademik').textContent = data.filter(e => e.category === 'Akademik').length;
+            document.getElementById('statOrganisasi').textContent = data.filter(e => e.category === 'Organisasi').length;
+        }
+
+        // ==========================================
+        // Filter & Search Handlers
+        // ==========================================
+        function handleFilterChange() {
+            currentSearchQuery = document.getElementById('searchInput').value;
+            renderDashboard();
+        }
+
+        function setCategoryFilter(category) {
+            currentFilterCategory = category;
+            updateCategoryPillsUI();
+            renderDashboard();
+        }
+
+        function updateCategoryPillsUI() {
+            const buttons = document.querySelectorAll('.cat-filter-btn');
+            buttons.forEach(btn => {
+                const cat = btn.getAttribute('data-category');
+                if (cat === currentFilterCategory) {
+                    btn.className = 'cat-filter-btn px-3.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer bg-brand-600 text-white shadow-xs';
+                } else {
+                    btn.className = 'cat-filter-btn px-3.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-600';
+                }
+            });
+        }
+
+        function resetSearchAndFilter() {
+            currentSearchQuery = '';
+            currentFilterCategory = 'Semua';
+            document.getElementById('searchInput').value = '';
+            updateCategoryPillsUI();
+            renderDashboard();
+        }
+
+        // ==========================================
+        // Modal & Form Handlers (Create & Update)
+        // ==========================================
+        function openModal(mode, id = null) {
+            const modal = document.getElementById('eskulModal');
+            const form = document.getElementById('eskulForm');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalSubtitle = document.getElementById('modalSubtitle');
+            const modalIconBox = document.getElementById('modalIconBox');
+            const modalSubmitText = document.getElementById('modalSubmitText');
+
+            form.reset();
+
+            if (mode === 'add') {
+                document.getElementById('formId').value = '';
+                modalTitle.textContent = 'Tambah Ekstrakurikuler Baru';
+                modalSubtitle.textContent = 'Lengkapi formulir untuk mendaftarkan kegiatan eskul baru';
+                modalIconBox.className = 'w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl';
+                modalIconBox.innerHTML = '<i class="ph-bold ph-plus"></i>';
+                modalSubmitText.textContent = 'Simpan Eskul';
+            } else if (mode === 'edit' && id) {
+                const allData = getStoredData();
+                const item = allData.find(e => e.id === id);
+
+                if (!item) {
+                    showToast('Data tidak ditemukan!', 'error');
+                    return;
+                }
+
+                document.getElementById('formId').value = item.id;
+                document.getElementById('formName').value = item.name || '';
+                document.getElementById('formCategory').value = item.category || 'Lainnya';
+                document.getElementById('formLeader').value = item.leader || '';
+                document.getElementById('formSchedule').value = item.schedule || '';
+                document.getElementById('formLogo').value = item.logo || '';
+                document.getElementById('formDescription').value = item.description || '';
+
+                modalTitle.textContent = 'Edit Ekstrakurikuler';
+                modalSubtitle.textContent = `Memperbarui data kegiatan: ${item.name}`;
+                modalIconBox.className = 'w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl';
+                modalIconBox.innerHTML = '<i class="ph-bold ph-pencil-simple"></i>';
+                modalSubmitText.textContent = 'Simpan Perubahan';
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => document.getElementById('formName').focus(), 100);
+        }
+
+        function closeModal() {
+            document.getElementById('eskulModal').classList.add('hidden');
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('formId').value;
+            const name = document.getElementById('formName').value.trim();
+            const category = document.getElementById('formCategory').value;
+            const leader = document.getElementById('formLeader').value.trim();
+            const schedule = document.getElementById('formSchedule').value.trim();
+            const logo = document.getElementById('formLogo').value.trim();
+            const description = document.getElementById('formDescription').value.trim();
+
+            if (!name) {
+                alert('Nama ekstrakurikuler wajib diisi!');
+                return;
+            }
+
+            let allData = getStoredData();
+
+            if (id) {
+                // Mode Edit / Update
+                const index = allData.findIndex(item => item.id === id);
+                if (index !== -1) {
+                    allData[index] = {
+                        ...allData[index],
+                        name,
+                        category,
+                        leader,
+                        schedule,
+                        logo,
+                        description,
+                        updatedAt: new Date().toISOString()
+                    };
+                    saveStoredData(allData);
+                    showToast(`Ekstrakurikuler "${name}" berhasil diperbarui!`, 'success');
+                }
+            } else {
+                // Mode Tambah Baru
+                const newItem = {
+                    id: Date.now().toString(),
+                    name,
+                    category,
+                    leader,
+                    schedule,
+                    logo,
+                    description,
+                    createdAt: new Date().toISOString()
+                };
+                allData.unshift(newItem); // Tambah di urutan paling atas
+                saveStoredData(allData);
+                showToast(`Ekstrakurikuler "${name}" berhasil ditambahkan!`, 'success');
+            }
+
+            closeModal();
+            renderDashboard();
+        }
+
+        // ==========================================
+        // Delete Item Handler
+        // ==========================================
+        function deleteItem(id, name) {
+            if (confirm(`Apakah Anda yakin ingin menghapus ekstrakurikuler "${name}"?`)) {
+                let allData = getStoredData();
+                allData = allData.filter(item => item.id !== id);
+                saveStoredData(allData);
+                renderDashboard();
+                showToast(`Ekstrakurikuler "${name}" berhasil dihapus!`, 'success');
+            }
+        }
+
+        // ==========================================
+        // Floating Toast Feedback
+        // ==========================================
+        let toastTimeout = null;
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastMessage.textContent = message;
+
+            if (type === 'error') {
+                toastIcon.className = 'ph-bold ph-warning-circle text-rose-400 text-xl';
+            } else {
+                toastIcon.className = 'ph-bold ph-check-circle text-emerald-400 text-xl';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        // Backdrop click & Escape to close modal
+        const modalEl = document.getElementById('eskulModal');
+        modalEl.addEventListener('click', (e) => {
+            if (e.target === modalEl) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modalEl.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+        // Utility: Escape HTML untuk mencegah XSS injection
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function escapeJs(text) {
+            if (!text) return '';
+            return String(text).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+    </script>
+</body>
+</html>

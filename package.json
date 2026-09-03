@@ -1,20 +1,15 @@
 {
   "name": "eskulbim",
   "version": "1.0.0",
-  "description": "Dashboard Admin Sekolah untuk Pengelolaan Ekstrakurikuler",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
-  },
-  "keywords": [],
+  "description": "Dashboard Ekstrakurikuler Sekolah (Web Statis - HTML, Tailwind CSS CDN, Vanilla JS LocalStorage)",
+  "homepage": "./index.html",
+  "keywords": [
+    "eskulbim",
+    "static-site",
+    "tailwindcss",
+    "localstorage",
+    "dashboard"
+  ],
   "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "dotenv": "^17.4.2",
-    "ejs": "^6.0.1",
-    "express": "^5.2.1",
-    "mysql2": "^3.24.3"
-  }
+  "license": "MIT"
 }
